@@ -10,7 +10,7 @@ defmodule ServerTest do
 
   describe "take_snapshot" do
     setup do
-      # Webshot.start_link
+      Webshot.start(nil, nil)
       :ok
     end
 

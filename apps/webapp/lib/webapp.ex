@@ -12,7 +12,9 @@ defmodule Webapp do
 
       supervisor(Webapp.Endpoint, []),
 
-      supervisor(Webapp.Workers.WebshotConsumer.Supervisor, [])
+      supervisor(Webapp.Workers.WebshotConsumer.Supervisor, []),
+
+      supervisor(Phoenix.PubSub.PG2, [Webapp.Queue, [pool_size: 1]])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
