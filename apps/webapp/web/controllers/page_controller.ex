@@ -7,7 +7,6 @@ defmodule Webapp.PageController do
 
   def webshot(conn, _params) do
     url = "http://localhost:4000"
-    # Webshot.Server.take_snapshot(self, url)
     Phoenix.PubSub.broadcast Webapp.Queue, "webshot:take",
       {:take_webshot, url}
     send_resp(conn, 200, "yep!")
