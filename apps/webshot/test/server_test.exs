@@ -15,15 +15,15 @@ defmodule ServerTest do
     end
 
     test "schedules a webshot job and sends the results back" do
-      Webshot.Server.take_snapshot(self, "google.com")
-      Webshot.Server.take_snapshot(self, "github.com")
+      Webshot.Server.take_snapshot(self, "http://localhost:4000/one.html")
+      Webshot.Server.take_snapshot(self, "http://localhost:4000/two.html")
 
-      assert_receive({:ok, {"google.com", google_fn}}, 5000, @timeout_message)
-      assert_receive({:ok, {"github.com", github_fn}}, 5000, @timeout_message)
+      assert_receive({:ok, {"http://localhost:4000/one.html", one_fn}}, 5000, @timeout_message)
+      assert_receive({:ok, {"http://localhost:4000/two.html", two_fn}}, 5000, @timeout_message)
       refute_receive _
 
-      assert File.exists?("webshots/#{google_fn}")
-      assert File.exists?("webshots/#{github_fn}")
+      assert File.exists?("webshots/#{one_fn}")
+      assert File.exists?("webshots/#{two_fn}")
     end
   end
 end
