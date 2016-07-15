@@ -12,7 +12,4 @@ defmodule HttpServer.Supervisor do
   end
 end
 
-opts = [strategy: :one_for_one, name: Webapp.Supervisor]
-Supervisor.start_link([Supervisor.Spec.supervisor(HttpServer.Supervisor, [])], opts)
-
 ExUnit.start()

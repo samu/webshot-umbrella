@@ -3,6 +3,12 @@ defmodule ServerTest do
 
   setup do
     File.rm_rf("webshots")
+
+    Supervisor.start_child(Webshot.Supervisor, Webshot.server_worker)
+    Supervisor.start_child(Webshot.Supervisor, Webshot.task_supervisor)
+    Supervisor.start_child(Webshot.Supervisor,
+      Supervisor.Spec.supervisor(HttpServer.Supervisor, []))
+
     :ok
   end
 

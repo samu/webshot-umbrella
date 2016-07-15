@@ -4,16 +4,15 @@ defmodule Webshot do
 
   @scheduler_name Webshot.Scheduler
 
-  def sup_for_env(:test),
-    do: [supervisor(Phoenix.PubSub.PG2, [Webapp.Queue, [pool_size: 1]])]
-  def sup_for_env(_), do: []
+  def server_worker, do: worker(Webshot.Server, [@scheduler_name])
+  def subscriber_worker, do: worker(Webshot.Subscriber, [])
+  def task_supervisor, do: supervisor(Task.Supervisor, [[name: @scheduler_name]])
+
+  def children_for_env(:test), do: []
+  def children_for_env(_), do: [server_worker, subscriber_worker, task_supervisor]
 
   def start(_type, _args) do
-    children = sup_for_env(Mix.env) ++ [
-      worker(Webshot.Server, [@scheduler_name]),
-      worker(Webshot.Subscriber, []),
-      supervisor(Task.Supervisor, [[name: @scheduler_name]])
-    ]
+    children = children_for_env(Mix.env)
 
     opts = [strategy: :one_for_one, name: Webshot.Supervisor]
     Supervisor.start_link(children, opts)

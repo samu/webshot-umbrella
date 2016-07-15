@@ -10,8 +10,12 @@ defmodule Webshot.Subscriber do
 
   def subscribe do
     receive do
-      message -> IO.inspect message
+      message -> do_work()
     end
     subscribe
+  end
+
+  defp do_work do
+    Webshot.Server.take_snapshot(self, "url")
   end
 end
