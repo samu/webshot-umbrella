@@ -8,11 +8,6 @@ defmodule SubscriberTest do
     Supervisor.start_child(Webshot.Supervisor,
       Supervisor.Spec.supervisor(Phoenix.PubSub.PG2,
       [Webapp.Queue, [pool_size: 1]]))
-    # sup = Supervisor.Spec.supervisor(Phoenix.PubSub.PG2,
-    #   [Webapp.Queue, [pool_size: 1]])
-
-    # opts = [strategy: :one_for_one, name: Webshot.Queue.Supervisor]
-    # Supervisor.start_link([sup], opts)
 
     Supervisor.start_child(Webshot.Supervisor,
       Supervisor.Spec.worker(Webshot.Subscriber, [work]))
@@ -25,7 +20,7 @@ defmodule SubscriberTest do
       Phoenix.PubSub.broadcast Webapp.Queue, "webshot:take",
         {:take_webshot, "test_url"}
 
-      # assert_receive {:message_received}
+      assert_receive {:message_received}
     end
   end
 end
