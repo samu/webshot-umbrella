@@ -18,6 +18,6 @@ defmodule Webshot.Subscriber do
   end
 
   def default_work do
-    Webshot.Server.take_snapshot(self, "url")
+    Webshot.Server.take_snapshot("github.com")
   end
 end

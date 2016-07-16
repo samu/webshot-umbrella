@@ -18,9 +18,10 @@ defmodule ServerTest do
       :ok
     end
 
+    @tag longrunning: true
     test "schedules a webshot job and sends the results back" do
-      Webshot.Server.take_snapshot(self, "http://localhost:4000/one.html")
-      Webshot.Server.take_snapshot(self, "http://localhost:4000/two.html")
+      Webshot.Server.take_snapshot("http://localhost:4000/one.html", self)
+      Webshot.Server.take_snapshot("http://localhost:4000/two.html", self)
 
       assert_receive({:ok, {"http://localhost:4000/one.html", one_fn}}, 5000, @timeout_message)
       assert_receive({:ok, {"http://localhost:4000/two.html", two_fn}}, 5000, @timeout_message)

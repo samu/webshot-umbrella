@@ -1,25 +1,30 @@
 defmodule Webshot.Server do
   use GenServer
+  @scheduler_name Webshot.Scheduler
 
-  def start_link(scheduler_name) do
-    GenServer.start_link(__MODULE__, {scheduler_name}, name: __MODULE__)
+  def start_link do
+    GenServer.start_link(__MODULE__, {}, name: __MODULE__)
   end
 
-  def take_snapshot(sender, url) do
-    GenServer.call(__MODULE__, {:take_snapshot, sender, url})
+  def take_snapshot(url, receiver \\ self) do
+    GenServer.call(__MODULE__, {:take_snapshot, url, receiver})
   end
 
-  def handle_call({:take_snapshot, sender, url}, _sender, {scheduler_name} = state) do
-    schedule_task(url, sender, scheduler_name)
+  def handle_call({:take_snapshot, url, receiver}, _sender, state) do
+    schedule_task(url, receiver)
     {:reply, true, state}
   end
 
-  defp schedule_task(url, sender, scheduler_name) do
+  def handle_info(message, state) do
+    {:noreply, state}
+  end
+
+  defp schedule_task(url, receiver) do
     work = fn ->
       result = run_command(url)
       result
     end
-    Webshot.Scheduler.do_work({work, sender, scheduler_name})
+    Webshot.Scheduler.do_work({work, receiver})
   end
 
   defp run_command(url) do

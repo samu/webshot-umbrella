@@ -1,8 +1,8 @@
 defmodule Webshot.Scheduler do
-  def do_work({work, client, name}) do
-    Task.Supervisor.async_nolink(name, fn ->
+  def do_work({work, receiver}) do
+    Task.Supervisor.async_nolink(__MODULE__, fn ->
       result = work.()
-      send(client, {:ok, result})
+      send(receiver, {:ok, result})
     end)
     true
   end

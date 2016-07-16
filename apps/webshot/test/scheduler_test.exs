@@ -1,10 +1,8 @@
 defmodule SchedulerTest do
   use ExUnit.Case
 
-  @sup :test_sup
-
   setup_all do
-    Task.Supervisor.start_link(name: @sup)
+    Task.Supervisor.start_link(name: Webshot.Scheduler)
     :ok
   end
 
@@ -13,7 +11,7 @@ defmodule SchedulerTest do
       {:output, 1}
     end
 
-    assert Webshot.Scheduler.do_work({work, self, @sup})
+    assert Webshot.Scheduler.do_work({work, self})
     assert_receive({:ok, {:output, 1}})
   end
 
@@ -25,9 +23,9 @@ defmodule SchedulerTest do
       end
     end
 
-    assert Webshot.Scheduler.do_work({produce_work.(1), self, @sup})
-    assert Webshot.Scheduler.do_work({produce_work.(2), self, @sup})
-    assert Webshot.Scheduler.do_work({produce_work.(3), self, @sup})
+    assert Webshot.Scheduler.do_work({produce_work.(1), self})
+    assert Webshot.Scheduler.do_work({produce_work.(2), self})
+    assert Webshot.Scheduler.do_work({produce_work.(3), self})
 
     assert_receive({:ok, 3}, 15)
   end
@@ -37,8 +35,8 @@ defmodule SchedulerTest do
       fn -> {1, _} = input end
     end
 
-    assert Webshot.Scheduler.do_work({produce_work.({2, 2}), self, @sup})
-    assert Webshot.Scheduler.do_work({produce_work.({1, 2}), self, @sup})
+    assert Webshot.Scheduler.do_work({produce_work.({2, 2}), self})
+    assert Webshot.Scheduler.do_work({produce_work.({1, 2}), self})
 
     assert_receive({:ok, {1, 2}})
     refute_receive({:ok, {2, 2}})
