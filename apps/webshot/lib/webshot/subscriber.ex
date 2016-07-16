@@ -1,13 +1,15 @@
 defmodule Webshot.Subscriber do
   use GenServer
 
+  @job_publisher Application.get_env(:webshot, :job_publisher)
+
   def start_link(work \\ &default_work/0) do
     GenServer.start_link(__MODULE__, {work}, name: __MODULE__)
   end
 
   def init state do
-    if Process.whereis(Webapp.Queue) do
-      Phoenix.PubSub.subscribe Webapp.Queue, "webshot:take"
+    if Process.whereis(@job_publisher) do
+      Phoenix.PubSub.subscribe @job_publisher, "webshot:take"
     end
     {:ok, state}
   end
@@ -17,8 +19,8 @@ defmodule Webshot.Subscriber do
   end
 
   def handle_cast(:subscribe, state) do
-    if Process.whereis(Webapp.Queue) do
-      Phoenix.PubSub.subscribe Webapp.Queue, "webshot:take"
+    if Process.whereis(@job_publisher) do
+      Phoenix.PubSub.subscribe @job_publisher, "webshot:take"
     end
     {:noreply, state}
   end
