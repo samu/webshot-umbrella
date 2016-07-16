@@ -3,7 +3,7 @@ defmodule SchedulerTest do
 
   @sup :test_sup
 
-  setup do
+  setup_all do
     Task.Supervisor.start_link(name: @sup)
     :ok
   end

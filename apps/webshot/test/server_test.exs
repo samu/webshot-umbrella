@@ -1,9 +1,7 @@
 defmodule ServerTest do
   use ExUnit.Case, async: true
 
-  setup do
-    File.rm_rf("webshots")
-
+  setup_all do
     Supervisor.start_child(Webshot.Supervisor, Webshot.server_worker)
     Supervisor.start_child(Webshot.Supervisor, Webshot.task_supervisor)
     Supervisor.start_child(Webshot.Supervisor,
@@ -16,7 +14,7 @@ defmodule ServerTest do
 
   describe "take_snapshot" do
     setup do
-      Webshot.start(nil, nil)
+      {:ok, _} = File.rm_rf("webshots")
       :ok
     end
 
