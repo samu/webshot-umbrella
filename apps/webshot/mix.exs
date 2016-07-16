@@ -19,7 +19,7 @@ defmodule Webshot.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     [ mod: {Webshot, []},
-      applications: [:logger]]
+      applications: [:logger, :postgrex]]
   end
 
   # Dependencies can be Hex packages:
@@ -38,6 +38,8 @@ defmodule Webshot.Mixfile do
   defp deps do
     [{:plug, "1.1.6"},
      {:phoenix_pubsub, "~> 1.0"},
-     {:cowboy, "~> 1.0"}]
+     {:cowboy, "~> 1.0"},
+     {:webapp, in_umbrella: true}
+    ]
   end
 end

@@ -1,5 +1,8 @@
 defmodule Webshot.Server do
   use GenServer
+  alias Webapp.Snapshot
+  alias Webapp.Repo
+
   @scheduler_name Webshot.Scheduler
 
   def start_link do
@@ -22,6 +25,8 @@ defmodule Webshot.Server do
   defp schedule_task(url, receiver) do
     work = fn ->
       result = run_command(url)
+      {_, filename} = result
+      consume(filename)
       result
     end
     Webshot.Scheduler.do_work({work, receiver})
@@ -43,5 +48,23 @@ defmodule Webshot.Server do
   defp rand do
     :random.seed(:os.system_time)
     :random.uniform(100_000)
+  end
+
+  defp consume(file) do
+    path = "./webshots/#{file}"
+    {:ok, entry} = put_in_db(path)
+    delete(path)
+    entry
+  end
+
+  defp delete path do
+    File.rm(path)
+  end
+
+  defp put_in_db path do
+    {:ok, data} = File.read(path)
+    Snapshot.changeset(
+      %Snapshot{}, %{"name" => "test", "data" => data})
+    |> Repo.insert
   end
 end
