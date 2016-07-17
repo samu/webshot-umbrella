@@ -28,13 +28,4 @@ defmodule ServerTest do
       _ = Repo.get!(Snapshot, entry.id)
     end
   end
-
-  describe "run_webshot_command" do
-    test "takes a snapshot and stores it in a file" do
-      {url, filename} = Webshot.Server.run_webshot_cmd(@url)
-
-      assert url == @url
-      assert File.exists?("webshots/#{filename}")
-    end
-  end
 end

@@ -30,7 +30,7 @@ defmodule Webshot.Server do
     Webshot.Scheduler.do_work({work, receiver})
   end
 
-  def run_webshot_cmd(url) do
+  defp run_webshot_cmd(url) do
     filename = "#{rand}.png"
     System.cmd("node", ["-e", command(url, filename)])
     {url, filename}
