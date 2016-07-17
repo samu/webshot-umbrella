@@ -24,15 +24,13 @@ defmodule Webshot.Server do
 
   defp schedule_task(url, receiver) do
     work = fn ->
-      result = run_command(url)
-      {_, filename} = result
+      {_, filename} = run_webshot_cmd(url)
       consume(filename)
-      result
     end
     Webshot.Scheduler.do_work({work, receiver})
   end
 
-  defp run_command(url) do
+  def run_webshot_cmd(url) do
     filename = "#{rand}.png"
     System.cmd("node", ["-e", command(url, filename)])
     {url, filename}
@@ -52,7 +50,8 @@ defmodule Webshot.Server do
 
   defp consume(file) do
     path = "./webshots/#{file}"
-    {:ok, entry} = put_in_db(path)
+    {:ok, data} = File.read(path)
+    {:ok, entry} = put_in_db(data)
     delete(path)
     entry
   end
@@ -61,8 +60,7 @@ defmodule Webshot.Server do
     File.rm(path)
   end
 
-  defp put_in_db path do
-    {:ok, data} = File.read(path)
+  defp put_in_db data do
     Snapshot.changeset(
       %Snapshot{}, %{"name" => "test", "data" => data})
     |> Repo.insert
