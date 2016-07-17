@@ -3,14 +3,9 @@ defmodule ServerTest do
   import Supervisor.Spec
 
   setup_all do
-    Supervisor.start_child(Webshot.Supervisor, supervisor(Webapp.Repo, []))
     Supervisor.start_child(Webshot.Supervisor, Webshot.server_worker)
     Supervisor.start_child(Webshot.Supervisor, Webshot.task_supervisor)
     Supervisor.start_child(Webshot.Supervisor, supervisor(HttpServer.Supervisor, []))
-
-    Ecto.Adapters.SQL.Sandbox.mode(Webapp.Repo, :manual)
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Webapp.Repo)
-    Ecto.Adapters.SQL.Sandbox.mode(Webapp.Repo, {:shared, self()})
 
     :ok
   end

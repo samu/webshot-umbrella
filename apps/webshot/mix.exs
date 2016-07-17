@@ -14,12 +14,9 @@ defmodule Webshot.Mixfile do
      deps: deps]
   end
 
-  # Configuration for the OTP application
-  #
-  # Type "mix help compile.app" for more information
   def application do
     [ mod: {Webshot, []},
-      applications: [:logger, :postgrex]]
+      applications: [:logger, :webapp]]
   end
 
   # Dependencies can be Hex packages:
